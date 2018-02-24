@@ -30,10 +30,10 @@ metadata {
 	standardTile("UGW_web", "device.UGW_web",  width: 6, height: 3,  canChangeIcon: false ) {
             state "default", icon: "http://icons.wxug.com/graphics/wu2/logo_130x80.png"      }   
              
-    standardTile("UGWtemperaturecallevel", "device.UGWtemperaturecallevel", width: 2, height: 2, decoration: "flat", canChangeIcon: false) {
+    standardTile("temperature", "device.temperature", width: 2, height: 2, decoration: "flat", canChangeIcon: false) {
             state "default", label: '${currentValue}º',unit:'${currentValue}', icon: "st.Weather.weather2", backgroundColor:"#e5e9ea"}  
         
-	standardTile("UGWhumiditylevel", "device.UGWhumiditylevel", width: 2, height: 2, decoration: "flat", canChangeIcon: false) {
+	standardTile("humidity", "device.humidity", width: 2, height: 2, decoration: "flat", canChangeIcon: false) {
             state "default", label: '${currentValue}', icon: "st.Weather.weather12", backgroundColor:"#e5e9ea"      }
             
 	standardTile("UGWFeelsLikelevel", "device.UGWFeelsLikelevel",  width: 2, height: 2, decoration: "flat", canChangeIcon: false) {
@@ -134,7 +134,7 @@ metadata {
 
    		}
 	main("wu_main")
-	details(["UGW_web","UGWtemperaturecallevel","UGWhumiditylevel","UGWFeelsLikelevel","UGWdewpointlevel","UGW_Icon_UrlIcon","weather","refresh" ])
+	details(["UGW_web","temperature","humidity","UGWFeelsLikelevel","UGWdewpointlevel","UGW_Icon_UrlIcon","weather","refresh" ])
  	}
 }
 
@@ -214,8 +214,8 @@ def refresh() {
                     // UnderGround Weather references
                     sendEvent(name: "UGWFeelsLikelevel", value: convertTemperature(resp.data.current_observation.feelslike_c.toFloat(),temperatureScale), unit: temperatureScale)
                     sendEvent(name: "UGWdewpointlevel", value: convertTemperature(resp.data.current_observation.dewpoint_c.toFloat(),temperatureScale), unit: temperatureScale)
-                    sendEvent(name: "UGWhumiditylevel", value: resp.data.current_observation.relative_humidity.toString())
-                    sendEvent(name: "UGWtemperaturecallevel", value: convertTemperature(resp.data.current_observation.temp_c.toFloat(),temperatureScale), unit: temperatureScale)
+                    sendEvent(name: "humidity", value: resp.data.current_observation.relative_humidity.toString())
+                    sendEvent(name: "temperature", value: convertTemperature(resp.data.current_observation.temp_c.toFloat(),temperatureScale), unit: temperatureScale)
                     sendEvent(name: "UGW_Icon_UrlIcon", value: resp.data.current_observation.icon_url.substring(28,resp.data.current_observation.icon_url.length()-4))
                     sendEvent(name: "wu_main", value: resp.data.current_observation.icon_url.substring(28,resp.data.current_observation.icon_url.length()-4))
                     sendEvent(name:"weather", value: resp.data.current_observation.weather, display:true, isStateChange: true)
