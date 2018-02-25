@@ -1,5 +1,5 @@
 # WeatherUndergroundWeb_SmartThings
-Smartapp and device to automate things based on webbased WeatherUnderground API services (requires a free API key)
+Smartapp and device to automate things based on WeatherUnderground services provided through SmartThings API
 
 <li>Import in your IDE the Smartapp and devicehandlers and publish the 2 for yourselves</li>
 <li>In the SmartApp menu of the Automation section in the mobile app, add Weather Underground Web Smartapp
