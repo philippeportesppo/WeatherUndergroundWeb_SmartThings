@@ -26,11 +26,7 @@ definition(
 
 preferences {
 
-section("Account and location") {
-            input "wuaccount", "text", title: "Weather Underground Account", defaultValue: "yourWUkey", required: true
-            input "wustate", "text", title: "Weather Underground State", defaultValue: "CA", required: true
-            input "wucity", "text", title: "Weather Underground City", defaultValue: "Sunnyvale", required: true         
-        }
+
         section("Alert Settings") {
             input "wusnowalert", "bool", title: "Snow Alert"
             input "wustormalert", "bool", title: "Storm Alert" 
@@ -148,34 +144,31 @@ def uninstalled() {
 
 def addDevices() {
 	    
-    		if (childDevices)
-            {
-            	def Ref= getAllChildDevices()?.find {
-    				it.device.deviceNetworkId == state.deviceId}
-					log.debug "Devices installed before removal ${Ref}"
-            	// Make sure the settings are applied by removing the previous occurence
-			    removeChildDevices(getChildDevices())
-                
-                Ref= getAllChildDevices()?.find {
-    				it.device.deviceNetworkId == state.deviceId}
-					log.debug "Devices installed after removal ${Ref}"
-			}
-            // and create it again with the new settings
-             subscribe(addChildDevice("philippeportesppo", "Weather Underground Web", state.deviceId, null, [
-                "label": "Weather in ${wucity},${wustate}",
-                "data": [
-                    "wucity": wucity,
-                    "wustate": wustate,
-                    "wuaccount": wuaccount,
-                    "wusnowalert": wusnowalert,
-                    "wustormalert": wustormalert,
-                    "wurainalert": wurainalert,
-                    "wulowtempalert": wulowtempalert,
-                    "wuhightempalert": wuhightempalert,
-                    "wulowhumidityalert": wulowhumidityalert,
-                    "wuhighhumidityalert": wuhighhumidityalert,
-                    /*completedSetup: true*/]
-            ]), "Alert", eventHandler)                           
+    if (childDevices)
+    {
+        def Ref= getAllChildDevices()?.find {
+            it.device.deviceNetworkId == state.deviceId}
+        log.debug "Devices installed before removal ${Ref}"
+        // Make sure the settings are applied by removing the previous occurence
+        removeChildDevices(getChildDevices())
+
+        Ref= getAllChildDevices()?.find {
+            it.device.deviceNetworkId == state.deviceId}
+        log.debug "Devices installed after removal ${Ref}"
+    }
+    // and create it again with the new settings
+    subscribe(addChildDevice("philippeportesppo", "Weather Underground Web", state.deviceId, null, [
+        "label": "Weather in ${wucity},${wustate}",
+        "data": [
+            "wusnowalert": wusnowalert,
+            "wustormalert": wustormalert,
+            "wurainalert": wurainalert,
+            "wulowtempalert": wulowtempalert,
+            "wuhightempalert": wuhightempalert,
+            "wulowhumidityalert": wulowhumidityalert,
+            "wuhighhumidityalert": wuhighhumidityalert,
+            /*completedSetup: true*/]
+    ]), "Alert", eventHandler)                           
 }
 
 def eventHandler(evt)
