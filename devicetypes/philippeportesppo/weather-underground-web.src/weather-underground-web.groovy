@@ -90,7 +90,7 @@ metadata {
     standardTile("weather", "device.weather", width: 6, height: 2) {
  		state "default", label:'${currentValue}'
  		} 
-    // Only used for things view in order to display a nice icon (I didn't ask permission to use it, so you can replace by what you like).
+
     standardTile("wu_main", "device.wu_main", decoration: "flat", width: 6, height: 4) 
     	{
                 state "chancerain",		icon: "https://raw.githubusercontent.com/philippeportesppo/AirMentorPro2_SmartThings/master/images/chancerain.png"
