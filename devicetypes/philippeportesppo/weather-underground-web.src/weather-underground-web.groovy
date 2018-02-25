@@ -34,7 +34,7 @@ metadata {
             state "default", label: '${currentValue}º',unit:'${currentValue}', icon: "st.Weather.weather2", backgroundColor:"#e5e9ea"}  
         
 	standardTile("humidity", "device.humidity", width: 2, height: 2, decoration: "flat", canChangeIcon: false) {
-            state "default", label: '${currentValue}', icon: "st.Weather.weather12", backgroundColor:"#e5e9ea"      }
+            state "default", label: '${currentValue}%', icon: "st.Weather.weather12", backgroundColor:"#e5e9ea"      }
             
 	standardTile("UGWFeelsLikelevel", "device.UGWFeelsLikelevel",  width: 2, height: 2, decoration: "flat", canChangeIcon: false) {
             state "default",  label: '${currentValue}º',unit:'${currentValue}',icon: "https://raw.githubusercontent.com/philippeportesppo/AirMentorPro2_SmartThings/master/images/realfeel.png", backgroundColor:"#e5e9ea"}
@@ -191,119 +191,104 @@ def forcepoll()
 def refresh() {
 	log.debug "Executing 'refresh'"
     
-	def serviceUrl = 'http://api.wunderground.com'
-	Map options = [:]
-    
-    def params = [
-    uri: serviceUrl,
-    path: '/api/'+getDataValue("wuaccount")+'/conditions/q/'+getDataValue("wustate")+'/'+getDataValue("wucity")+'.json'
-	]
+    def mymap = getWeatherFeature("conditions")
         
-    try {
-        httpGet(params) { resp ->
-                    log.debug "response feelslike_c: ${resp.data.current_observation.feelslike_c}"
-                    log.debug "response dewpoint_c: ${resp.data.current_observation.dewpoint_c}"
-                    log.debug "response relative_humidity: ${resp.data.current_observation.relative_humidity}"
-                    log.debug "response temp_c: ${resp.data.current_observation.temp_c}"
-                    log.debug "response icon: "+resp.data.current_observation.icon_url.substring(28,resp.data.current_observation.icon_url.length()-4)
-                    log.debug "response weather: ${resp.data.current_observation.weather}"
+    log.debug "response feelslike_c: ${mymap['current_observation']['feelslike_c']}"
+    log.debug "response dewpoint_c: ${mymap['current_observation']['dewpoint_c']}"
+    log.debug "response relative_humidity: ${mymap['current_observation']['relative_humidity']}"
+    log.debug "response temp_c: ${mymap['current_observation']['temp_c']}"
+    log.debug "response weather: ${mymap['current_observation']['weather']}"
 
-                    //log.debug "Generating events for UX refresh"
-                    def temperatureScale = getTemperatureScale()
+    //log.debug "Generating events for UX refresh"
+    def temperatureScale = getTemperatureScale()
 
-                    // UnderGround Weather references
-                    sendEvent(name: "UGWFeelsLikelevel", value: convertTemperature(resp.data.current_observation.feelslike_c.toFloat(),temperatureScale), unit: temperatureScale)
-                    sendEvent(name: "UGWdewpointlevel", value: convertTemperature(resp.data.current_observation.dewpoint_c.toFloat(),temperatureScale), unit: temperatureScale)
-                    sendEvent(name: "humidity", value: resp.data.current_observation.relative_humidity.toString())
-                    sendEvent(name: "temperature", value: convertTemperature(resp.data.current_observation.temp_c.toFloat(),temperatureScale), unit: temperatureScale)
-                    sendEvent(name: "UGW_Icon_UrlIcon", value: resp.data.current_observation.icon_url.substring(28,resp.data.current_observation.icon_url.length()-4))
-                    sendEvent(name: "wu_main", value: resp.data.current_observation.icon_url.substring(28,resp.data.current_observation.icon_url.length()-4))
-                    sendEvent(name:"weather", value: resp.data.current_observation.weather, display:true, isStateChange: true)
+    // UnderGround Weather references
+    sendEvent(name: "UGWFeelsLikelevel", value: convertTemperature(mymap['current_observation']['feelslike_c'].toFloat(),temperatureScale), unit: temperatureScale)
+    sendEvent(name: "UGWdewpointlevel", value: convertTemperature(mymap['current_observation']['dewpoint_c'].toFloat(),temperatureScale), unit: temperatureScale)
+    sendEvent(name: "humidity", value:  mymap['current_observation']['relative_humidity'].substring(0, mymap['current_observation']['relative_humidity'].length()-1))
+    sendEvent(name: "temperature", value: convertTemperature(mymap['current_observation']['temp_c'].toFloat(),temperatureScale), unit: temperatureScale)
+    sendEvent(name: "UGW_Icon_UrlIcon", value: mymap['current_observation']['icon_url'].substring(28,mymap['current_observation']['icon_url'].length()-4))
+    sendEvent(name: "wu_main", value: mymap['current_observation']['icon_url'].substring(28,mymap['current_observation']['icon_url'].length()-4))
+    sendEvent(name:"weather", value: mymap['current_observation']['weather'], display:true, isStateChange: true)
 
 
-					if (getDataValue("wusnowalert")=="True" && resp.data.current_observation.icon_url.contains("snow"))
-                        {
-                        if ( state.snowalert == false) {
-                            sendEvent(name:"Alert", value: "WUW Snow Alert!", display:true, isStateChange: true)
-                            state.snowalert=true  }
-                        }
-                    else
-                        state.snowalert=false
+    if (getDataValue("wusnowalert")=="True" && mymap['current_observation']['icon_url'].contains("snow"))
+    {
+        if ( state.snowalert == false) {
+            sendEvent(name:"Alert", value: "WUW Snow Alert!", display:true, isStateChange: true)
+            state.snowalert=true  }
+    }
+    else
+        state.snowalert=false
 
-					if (getDataValue("wurainalert")=="True" && resp.data.current_observation.icon_url.contains("rain"))
-                        {
-                        if ( state.rainalert == false) {
-                            sendEvent(name:"Alert", value: "WUW Rain Alert!", display:true, isStateChange: true)
-                            state.rainalert=true  }
-                        }
-                    else
-                        state.rainalert=false
+    if (getDataValue("wurainalert")=="True" && mymap['current_observation']['icon_url'].contains("rain"))
+    {
+        if ( state.rainalert == false) {
+            sendEvent(name:"Alert", value: "WUW Rain Alert!", display:true, isStateChange: true)
+            state.rainalert=true  }
+    }
+    else
+        state.rainalert=false
 
-					if (getDataValue("wustormalert")=="True" && resp.data.current_observation.icon_url.contains("rain"))
-                        {
-                        if ( state.stormalert == false) {
-                            sendEvent(name:"Alert", value: "WUW Storm Alert!", display:true, isStateChange: true)
-                            state.stormalert=true  }
-                        }
-                    else
-                        state.stormalert=false
+    if (getDataValue("wustormalert")=="True" && mymap['current_observation']['icon_url'].contains("rain"))
+    {
+        if ( state.stormalert == false) {
+            sendEvent(name:"Alert", value: "WUW Storm Alert!", display:true, isStateChange: true)
+            state.stormalert=true  }
+    }
+    else
+        state.stormalert=false
 
-                if (getDataValue("wulowtempalert")!="null") {
-                    if (getDataValue("wulowtempalert").toFloat() >= convertTemperature(resp.data.current_observation.temp_c.toFloat(),temperatureScale).toFloat())
-                   	 	{
+    if (getDataValue("wulowtempalert")!="null") {
+        if (getDataValue("wulowtempalert").toFloat() >= convertTemperature(mymap['current_observation']['icon_url'].toFloat(),temperatureScale).toFloat())
+        {
 
-                        if ( state.lowtempalert == false) {
-                            sendEvent(name:"Alert", value: "WUW Low Temperature Alert!", display:true, isStateChange: true)
-                        	state.lowtempalert=True }
-                    	}
-                    else
-                       state.lowtempalert=false
-                }
-
-                if (getDataValue("wuhightempalert")!="null") {
-                    if (getDataValue("wuhightempalert").toFloat() <= convertTemperature(resp.data.current_observation.temp_c.toFloat(),temperatureScale).toFloat())
-                        {
-
-                        if ( state.hightempalert == false) {
-                            sendEvent(name:"Alert", value: "WUW High Temperature Alert!", display:true, isStateChange: true)
-                            state.hightempalert=frue }
-                        }
-                        else
-                            state.hightempalert=false
-                }
-
-                if (getDataValue("wulowhumidityalert")!="null") {
-                    if (getDataValue("wulowhumidityalert").toFloat() >= resp.data.current_observation.relative_humidity.substring(0,resp.data.current_observation.relative_humidity.length()-1).toFloat())
-                            {
-
-                            if ( state.lowhumidityalert == false) {
-
-                            	sendEvent(name:"Alert", value: "WUW Low Humidity Alert!", display:true, isStateChange: true)
-                                state.lowhumidityalert=true }
-                            }
-                        else
-                        {
-                            state.lowhumidityalert=false
-   
-                        }
-                }
-
-                if (getDataValue("wuhighhumidityalert")!="null") {
- 
-                    if (getDataValue("wuhighhumidityalert").toFloat() <= resp.data.current_observation.relative_humidity.substring(0,resp.data.current_observation.relative_humidity.length()-1).toFloat())
-                            {
-                            if ( state.highhumidityalert == false) {
-                            	sendEvent(name:"Alert", value: "WUW High Humidity Alert!", display:true, isStateChange: true)
-                                state.highhumidityalert=true }
-                            }
-                        else
-                            state.highhumidityalert=false
-                }
-
-    		}
+            if ( state.lowtempalert == false) {
+                sendEvent(name:"Alert", value: "WUW Low Temperature Alert!", display:true, isStateChange: true)
+                state.lowtempalert=True }
         }
-        catch (e) {
-        	log.error "something went wrong: $e"
-    	}
-        
-}
+        else
+            state.lowtempalert=false
+    }
+
+    if (getDataValue("wuhightempalert")!="null") {
+        if (getDataValue("wuhightempalert").toFloat() <= convertTemperature(mymap['current_observation']['icon_url'].toFloat(),temperatureScale).toFloat())
+        {
+
+            if ( state.hightempalert == false) {
+                sendEvent(name:"Alert", value: "WUW High Temperature Alert!", display:true, isStateChange: true)
+                state.hightempalert=frue }
+        }
+        else
+            state.hightempalert=false
+    }
+
+    if (getDataValue("wulowhumidityalert")!="null") {
+        if (getDataValue("wulowhumidityalert").toFloat() >= mymap['current_observation']['relative_humidity'].substring(0, mymap['current_observation']['relative_humidity'].length()-1).toFloat())
+        {
+
+            if ( state.lowhumidityalert == false) {
+
+                sendEvent(name:"Alert", value: "WUW Low Humidity Alert!", display:true, isStateChange: true)
+                state.lowhumidityalert=true }
+        }
+        else
+        {
+            state.lowhumidityalert=false
+
+        }
+    }
+
+    if (getDataValue("wuhighhumidityalert")!="null") {
+
+        if (getDataValue("wuhighhumidityalert").toFloat() <= mymap['current_observation']['relative_humidity'].substring(0, mymap['current_observation']['relative_humidity'].length()-1).toFloat())
+        {
+            if ( state.highhumidityalert == false) {
+                sendEvent(name:"Alert", value: "WUW High Humidity Alert!", display:true, isStateChange: true)
+                state.highhumidityalert=true }
+        }
+        else
+            state.highhumidityalert=false
+    }
+
+}    
