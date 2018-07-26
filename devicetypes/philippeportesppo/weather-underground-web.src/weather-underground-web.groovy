@@ -177,7 +177,7 @@ def parse(String description) {
 	state.hightempalert=false
     state.lowhumidityalert=false
     state.highhumidityalert=false    
-        
+    refresh()    
     runEvery10Minutes(forcepoll)
     
 }
