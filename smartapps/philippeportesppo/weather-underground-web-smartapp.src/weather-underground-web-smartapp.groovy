@@ -22,145 +22,155 @@ definition(
     iconUrl: "http://icons.wxug.com/graphics/wu2/logo_130x80.png",
     iconX2Url: "http://icons.wxug.com/graphics/wu2/logo_130x80.png",
     iconX3Url: "http://icons.wxug.com/graphics/wu2/logo_130x80.png")
-
+	singleInstance: true
 
 preferences {
 
 
         section("Alert Settings") {
-            input "wusnowalert", "bool", title: "Snow Alert"
-            input "wustormalert", "bool", title: "Storm Alert" 
-        	input "wurainalert", "bool", title: "Rain Alert"
-			input "wulowtempalert", "number", title: "Low temperature Alert (C or F)", required: false
- 			input "wuhightempalert", "number", title: "High temperature Alert (C or F)", required: false
-			input "wulowhumidityalert", "decimal", title: "Low humidity Alert (0-100)", required: false
-            input "wuhighhumidityalert", "decimal", title: "High humidity Alert (0-100)", required: false            
+            input "wusnowalert", "bool", title: "Snow Alert", submitOnChange:false
+            input "wustormalert", "bool", title: "Storm Alert", submitOnChange:false
+        	input "wurainalert", "bool", title: "Rain Alert", submitOnChange:false
+			input "wulowtempalert", "number", title: "Low temperature Alert (C or F)", required: false, submitOnChange:false
+ 			input "wuhightempalert", "number", title: "High temperature Alert (C or F)", required: false, submitOnChange:false
+			input "wulowhumidityalert", "decimal", title: "Low humidity Alert (0-100)", required: false, submitOnChange:false
+            input "wuhighhumidityalert", "decimal", title: "High humidity Alert (0-100)", required: false, submitOnChange:false            
         }
         
         section("Switch On these on Snow Alert:")
         {
-        	input "wusnowon", "capability.switch", required: false, multiple: true
+        	input "wusnowon", "capability.switch", required: false, multiple: true, submitOnChange:false
         }
         
         section("Switch Off these on Snow Alert:")
         {
-        	input "wusnowoff", "capability.switch", required: false, multiple: true
+        	input "wusnowoff", "capability.switch", required: false, multiple: true, submitOnChange:false
         }
         
         section("Switch On these on Rain Alert:")
         {
-        	input "wurainon", "capability.switch", required: false, multiple: true
+        	input "wurainon", "capability.switch", required: false, multiple: true, submitOnChange:false
         }
         
         section("Switch Off these on Rain Alert:")
         {
-        	input "wurainoff", "capability.switch", required: false, multiple: true
+        	input "wurainoff", "capability.switch", required: false, multiple: true, submitOnChange:false
         }
         
         section("Switch On these on Storm Alert:")
         {
-        	input "wustormon", "capability.switch", required: false, multiple: true
+        	input "wustormon", "capability.switch", required: false, multiple: true, submitOnChange:false
         }
         
         section("Switch Off these on Storm Alert:")
         {
-        	input "wustormoff", "capability.switch", required: false, multiple: true
+        	input "wustormoff", "capability.switch", required: false, multiple: true, submitOnChange:false
         }
         
 		section("Switch On these on Low Temperature Alert:")
         {
-        	input "wulowton", "capability.switch", required: false, multiple: true
+        	input "wulowton", "capability.switch", required: false, multiple: true, submitOnChange:false
         }
         
         section("Switch Off these on Low Temperature Alert:")
         {
-        	input "wulowtoff", "capability.switch", required: false, multiple: true
+        	input "wulowtoff", "capability.switch", required: false, multiple: true, submitOnChange:false
         }
        	
         section("Switch On these on High Temperature Alert:")
         {
-        	input "wuhighton", "capability.switch", required: false, multiple: true
+        	input "wuhighton", "capability.switch", required: false, multiple: true, submitOnChange:false
         }
         
         section("Switch Off these on High Temperature Alert:")
         {
-        	input "wuhightoff", "capability.switch", required: false, multiple: true
+        	input "wuhightoff", "capability.switch", required: false, multiple: true, submitOnChange:false
         }
         
         section("Switch On these on Low Humidity Alert:")
         {
-        	input "wulowhon", "capability.switch", required: false, multiple: true
+        	input "wulowhon", "capability.switch", required: false, multiple: true, submitOnChange:false
         }
         
         section("Switch Off these on Low Humidity Alert:")
         {
-        	input "wulowhoff", "capability.switch", required: false, multiple: true
+        	input "wulowhoff", "capability.switch", required: false, multiple: true, submitOnChange:false
         }
         
         section("Switch On these on High Humidity Alert:")
         {
-        	input "wuhighhon", "capability.switch", required: false, multiple: true
+        	input "wuhighhon", "capability.switch", required: false, multiple: true, submitOnChange:false
         }
         
         section("Switch Off these on High Humidity Alert:")
         {
-        	input "wuhighhoff", "capability.switch", required: false, multiple: true
+        	input "wuhighhoff", "capability.switch", required: false, multiple: true, submitOnChange:false
         }
         
 }
 
 def installed() {
 	log.debug "Installed with settings: ${settings}"
-	state.deviceId="12345678AE"
-    state.deviceName=""
-    state.deviceRef= getAllChildDevices()?.find {
-    it.device.deviceNetworkId == state.deviceId}
-	log.debug "state.deviceRef installed with ${state.deviceRef}"
+    state.childDevices = null
+    
+    def Ref= getAllChildDevices()?.find {
+        it.device.deviceNetworkId == "12345678AF"}
+    log.debug "Devices existing at intallation ${Ref}"
+    Ref= getAllChildDevices()?.find {
+        it.device.deviceNetworkId == "12345678AE"}
+    log.debug "Devices existing at intallation ${Ref}"
+    //state.deviceName=""
+    //state.deviceRef= getAllChildDevices()?.find {
+    //it.device.deviceNetworkId == state.deviceId}
+	//log.debug "state.deviceRef installed with ${state.deviceRef}"
 }
+
+
 
 def updated() {
 	log.debug "Updated with settings: ${settings}"
 
 	unsubscribe() 
     addDevices()
-    //initialize()
-
-}
-
-def initialize() {
-	log.debug "initialize"
-    
 }
 
 private removeChildDevices(delete) {
+	log.debug "removeChildDevices"
+
     delete.each {
+    	log.debug "Deletine ${it}" 
         deleteChildDevice(it.deviceNetworkId)
     }
+    state.childDevices = null
 }
 
 def uninstalled() {
-    removeChildDevices(getChildDevices())
+	log.debug "uninstalled"
+
+    removeChildDevices(getChildDevices()) 
 }
 
 def addDevices() {
-	    
-    if (childDevices)
-    {
-        def Ref= getAllChildDevices()?.find {
-            it.device.deviceNetworkId == state.deviceId}
-        log.debug "Devices installed before removal ${Ref}"
-        // Make sure the settings are applied by removing the previous occurence
-        removeChildDevices(getChildDevices())
+	log.debug "addDevices"
+	
+    state.deviceId="12345678AF"
 
-        Ref= getAllChildDevices()?.find {
-            it.device.deviceNetworkId == state.deviceId}
-        log.debug "Devices installed after removal ${Ref}"
-    }
-    // and create it again with the new settings
+ 
+    //def Ref= getAllChildDevices()?.find {
+    //    it.device.deviceNetworkId == state.deviceId}
+    //log.debug "Devices installed before removal ${Ref}"
+    // Make sure the settings are applied by removing the previous occurence
+    //removeChildDevices(getChildDevices())
+
+    def Ref= getAllChildDevices()?.find {
+        it.device.deviceNetworkId == state.deviceId}
+    log.debug "Devices installed after removal ${Ref}"
+ 
+ 	// and create it again with the new settings
     def mymap = getWeatherFeature("conditions")
-
     def wucity = mymap['current_observation']['display_location']['full']
-    subscribe(addChildDevice("philippeportesppo", "Weather Underground Web", state.deviceId, null, [
+
+	state.childDevices = addChildDevice("philippeportesppo", "Weather Underground Web", state.deviceId, null, [
         "label": "Weather in ${wucity}",
         "data": [
             "wusnowalert": wusnowalert,
@@ -170,8 +180,10 @@ def addDevices() {
             "wuhightempalert": wuhightempalert,
             "wulowhumidityalert": wulowhumidityalert,
             "wuhighhumidityalert": wuhighhumidityalert,
-            /*completedSetup: true*/]
-    ]), "Alert", eventHandler)                           
+            completedSetup: true]
+    ])
+
+    subscribe(state.childDevices, "Alert", eventHandler)                           
 }
 
 def eventHandler(evt)
@@ -201,6 +213,7 @@ def eventHandler(evt)
             	wurainoff.off()
             }     	
 
+		log.debug evt.value
 		if (evt.value.contains("Temperature")) {
         	if (evt.value.contains("High"))
             {
