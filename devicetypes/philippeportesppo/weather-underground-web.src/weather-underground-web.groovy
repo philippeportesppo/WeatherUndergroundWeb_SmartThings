@@ -192,7 +192,16 @@ def refresh() {
 	log.debug "Executing 'refresh'"
     
     def mymap = getWeatherFeature("conditions")
-        
+
+	/*log.debug "state.snowalert=${state.snowalert}"
+    log.debug "state.stormalert=${state.stormalert}"
+    log.debug "state.rainmalert=${state.rainmalert}"
+    log.debug "state.lowtempalert=${state.lowtempalert}"
+    log.debug "state.hightempalert=${state.hightempalert}"
+    log.debug "state.lowhumidityalert=${state.lowhumidityalert}"
+    log.debug "state.highhumidityalert=${state.highhumidityalert}"*/
+
+
     log.debug "response feelslike_c: ${mymap['current_observation']['feelslike_c']}"
     log.debug "response dewpoint_c: ${mymap['current_observation']['dewpoint_c']}"
     log.debug "response relative_humidity: ${mymap['current_observation']['relative_humidity']}"
@@ -214,50 +223,50 @@ def refresh() {
 
     if (getDataValue("wusnowalert")=="True" && mymap['current_observation']['icon_url'].contains("snow"))
     {
-        if ( state.snowalert == false) {
+        // if ( state.snowalert == false) {
             sendEvent(name:"Alert", value: "WUW Snow Alert!", display:true, isStateChange: true)
-            state.snowalert=true  }
+        //    state.snowalert=true  }
     }
     else
         state.snowalert=false
 
     if (getDataValue("wurainalert")=="True" && mymap['current_observation']['icon_url'].contains("rain"))
     {
-        if ( state.rainalert == false) {
+        // if ( state.rainalert == false) {
             sendEvent(name:"Alert", value: "WUW Rain Alert!", display:true, isStateChange: true)
-            state.rainalert=true  }
+        //    state.rainalert=true  }
     }
     else
         state.rainalert=false
 
     if (getDataValue("wustormalert")=="True" && mymap['current_observation']['icon_url'].contains("rain"))
     {
-        if ( state.stormalert == false) {
+        // if ( state.stormalert == false) {
             sendEvent(name:"Alert", value: "WUW Storm Alert!", display:true, isStateChange: true)
-            state.stormalert=true  }
+        //    state.stormalert=true  }
     }
     else
         state.stormalert=false
 
     if (getDataValue("wulowtempalert")!="null") {
-        if (getDataValue("wulowtempalert").toFloat() >= convertTemperature(mymap['current_observation']['icon_url'].toFloat(),temperatureScale).toFloat())
+        if (getDataValue("wulowtempalert").toFloat() >= convertTemperature(mymap['current_observation']['temp_c'].toFloat(),temperatureScale).toFloat())
         {
 
-            if ( state.lowtempalert == false) {
+            //if ( state.lowtempalert == false) {
                 sendEvent(name:"Alert", value: "WUW Low Temperature Alert!", display:true, isStateChange: true)
-                state.lowtempalert=True }
+            //    state.lowtempalert=true }
         }
         else
             state.lowtempalert=false
     }
 
     if (getDataValue("wuhightempalert")!="null") {
-        if (getDataValue("wuhightempalert").toFloat() <= convertTemperature(mymap['current_observation']['icon_url'].toFloat(),temperatureScale).toFloat())
+        if (getDataValue("wuhightempalert").toFloat() <= convertTemperature(mymap['current_observation']['temp_c'].toFloat(),temperatureScale).toFloat())
         {
 
-            if ( state.hightempalert == false) {
+            //if ( state.hightempalert == false) {
                 sendEvent(name:"Alert", value: "WUW High Temperature Alert!", display:true, isStateChange: true)
-                state.hightempalert=frue }
+            //    state.hightempalert=true }
         }
         else
             state.hightempalert=false
@@ -267,10 +276,10 @@ def refresh() {
         if (getDataValue("wulowhumidityalert").toFloat() >= mymap['current_observation']['relative_humidity'].substring(0, mymap['current_observation']['relative_humidity'].length()-1).toFloat())
         {
 
-            if ( state.lowhumidityalert == false) {
+            //if ( state.lowhumidityalert == false) {
 
                 sendEvent(name:"Alert", value: "WUW Low Humidity Alert!", display:true, isStateChange: true)
-                state.lowhumidityalert=true }
+            //    state.lowhumidityalert=true }
         }
         else
         {
@@ -283,9 +292,9 @@ def refresh() {
 
         if (getDataValue("wuhighhumidityalert").toFloat() <= mymap['current_observation']['relative_humidity'].substring(0, mymap['current_observation']['relative_humidity'].length()-1).toFloat())
         {
-            if ( state.highhumidityalert == false) {
+            //if ( state.highhumidityalert == false) {
                 sendEvent(name:"Alert", value: "WUW High Humidity Alert!", display:true, isStateChange: true)
-                state.highhumidityalert=true }
+            //    state.highhumidityalert=true }
         }
         else
             state.highhumidityalert=false
