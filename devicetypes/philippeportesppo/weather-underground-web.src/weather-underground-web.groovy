@@ -224,7 +224,7 @@ def refresh() {
     if (getDataValue("wusnowalert")=="True" && mymap['current_observation']['icon_url'].contains("snow"))
     {
         // if ( state.snowalert == false) {
-            sendEvent(name:"Alert", value: "WUW Snow Alert!", display:true, isStateChange: true)
+            sendEvent(name:"Alert", value: "WUW Snow Alert!", display:true)
         //    state.snowalert=true  }
     }
     else
@@ -233,7 +233,7 @@ def refresh() {
     if (getDataValue("wurainalert")=="True" && mymap['current_observation']['icon_url'].contains("rain"))
     {
         // if ( state.rainalert == false) {
-            sendEvent(name:"Alert", value: "WUW Rain Alert!", display:true, isStateChange: true)
+            sendEvent(name:"Alert", value: "WUW Rain Alert!", display:true)
         //    state.rainalert=true  }
     }
     else
@@ -242,7 +242,7 @@ def refresh() {
     if (getDataValue("wustormalert")=="True" && mymap['current_observation']['icon_url'].contains("rain"))
     {
         // if ( state.stormalert == false) {
-            sendEvent(name:"Alert", value: "WUW Storm Alert!", display:true, isStateChange: true)
+            sendEvent(name:"Alert", value: "WUW Storm Alert!", display:true)
         //    state.stormalert=true  }
     }
     else
@@ -253,7 +253,7 @@ def refresh() {
         {
 
             //if ( state.lowtempalert == false) {
-                sendEvent(name:"Alert", value: "WUW Low Temperature Alert!", display:true, isStateChange: true)
+                sendEvent(name:"Alert", value: "WUW Low Temperature Alert!", display:true)
             //    state.lowtempalert=true }
         }
         else
@@ -265,7 +265,7 @@ def refresh() {
         {
 
             //if ( state.hightempalert == false) {
-                sendEvent(name:"Alert", value: "WUW High Temperature Alert!", display:true, isStateChange: true)
+                sendEvent(name:"Alert", value: "WUW High Temperature Alert!", display:true)
             //    state.hightempalert=true }
         }
         else
@@ -278,7 +278,7 @@ def refresh() {
 
             //if ( state.lowhumidityalert == false) {
 
-                sendEvent(name:"Alert", value: "WUW Low Humidity Alert!", display:true, isStateChange: true)
+                sendEvent(name:"Alert", value: "WUW Low Humidity Alert!", display:true)
             //    state.lowhumidityalert=true }
         }
         else
@@ -293,7 +293,7 @@ def refresh() {
         if (getDataValue("wuhighhumidityalert").toFloat() <= mymap['current_observation']['relative_humidity'].substring(0, mymap['current_observation']['relative_humidity'].length()-1).toFloat())
         {
             //if ( state.highhumidityalert == false) {
-                sendEvent(name:"Alert", value: "WUW High Humidity Alert!", display:true, isStateChange: true)
+                sendEvent(name:"Alert", value: "WUW High Humidity Alert!", display:true)
             //    state.highhumidityalert=true }
         }
         else
