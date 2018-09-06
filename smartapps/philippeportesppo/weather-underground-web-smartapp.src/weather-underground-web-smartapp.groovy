@@ -112,7 +112,7 @@ preferences {
 def installed() {
 	log.debug "Installed with settings: ${settings}"
     state.childDevices = null
-    
+    state.deviceId="12345678AF"
     def Ref= getAllChildDevices()?.find {
         it.device.deviceNetworkId == "12345678AF"}
     log.debug "Devices existing at intallation ${Ref}"
@@ -138,8 +138,8 @@ private removeChildDevices(delete) {
 	log.debug "removeChildDevices"
 
     delete.each {
-    	log.debug "Deletine ${it}" 
-        deleteChildDevice(it.deviceNetworkId)
+    	log.debug "Deletine 12345678AF" 
+        deleteChildDevice("12345678AF")
     }
     state.childDevices = null
 }
@@ -153,24 +153,21 @@ def uninstalled() {
 def addDevices() {
 	log.debug "addDevices"
 	
-    state.deviceId="12345678AF"
-
- 
     //def Ref= getAllChildDevices()?.find {
     //    it.device.deviceNetworkId == state.deviceId}
     //log.debug "Devices installed before removal ${Ref}"
     // Make sure the settings are applied by removing the previous occurence
-    //removeChildDevices(getChildDevices())
+    removeChildDevices(getChildDevices())
 
     def Ref= getAllChildDevices()?.find {
-        it.device.deviceNetworkId == state.deviceId}
+        it.device.deviceNetworkId == "12345678AF"}
     log.debug "Devices installed after removal ${Ref}"
  
  	// and create it again with the new settings
     def mymap = getWeatherFeature("conditions")
     def wucity = mymap['current_observation']['display_location']['full']
 
-	state.childDevices = addChildDevice("philippeportesppo", "Weather Underground Web", state.deviceId, null, [
+	state.childDevices = addChildDevice("philippeportesppo", "Weather Underground Web", "12345678AF", null, [
         "label": "Weather in ${wucity}",
         "data": [
             "wusnowalert": wusnowalert,
