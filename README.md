@@ -5,6 +5,6 @@ Smartapp and device to automate things based on WeatherUnderground services prov
 <li>In the SmartApp menu of the Automation section in the mobile app, add Weather Underground Web Smartapp
 <li> Setup the threshold and alerts you want to monitor</li>
 <li> Select the switches you want to turn on or off upon the alert trigger</li>
-<li> Enjoy localized weather alerts and automation!</li>
+<li> Enjoy localized weather alerts and automation!<p><p></li>
 
-
+[![Support via PayPal](https://cdn.rawgit.com/twolfson/paypal-github-button/1.0.0/dist/button.svg)](https://www.paypal.me/philippeportesppo)
